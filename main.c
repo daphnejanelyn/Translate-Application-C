@@ -2,6 +2,7 @@
 
 #define MAX_PAIRS 20
 #define MAX_CHARS 150
+#define MAX_ENTRIES 150
 
 typedef char str[MAX_CHARS];
 
@@ -56,14 +57,16 @@ void toUpper(char * string)
 
 }
 
-void addEntry(int *nData, int nEntryCount, int nPairCount, struct entries entrydir)
+void addEntry(int *nData, struct entries entrydir)
 {
     str tempLang;
     str tempTrans;
     str new;
     int i, j;
 	str temparr;
-	int nFound = 0; 
+	int nFound = 0;
+	int nEntryCount = entrydir.nEntryCount; 
+	int nPairCount = 0; 
     printf("Enter language: ");
     fgets(tempLang, MAX_PAIRS, stdin);
     printf("Enter translation: ");
@@ -117,11 +120,9 @@ void addEntry(int *nData, int nEntryCount, int nPairCount, struct entries entryd
         nEntryCount++;
         nPairCount++;
 
-
-
-
     }
-
+	entrydir.nEntryCount = nEntryCount;
+	entrydir.Entries[nEntryCount - 1].nPairCount = nPairCount;
 }
 
 
@@ -131,8 +132,11 @@ int main()
     int nMenu, nData = 0;
     struct entries entrydir;
     entrydir.nEntryCount = 0;
-
-    entrydir.entry.nPairCount = 0;
+	
+	int i;
+	
+	for (i = 0; i < MAX_ENTRIES; i++)
+		entrydir.Entries[i].nPairCount = 0;
     do
     {
         /* Display and get menu input */
@@ -146,7 +150,7 @@ int main()
             do
             {
                 /* add entry */
-                addEntry(&nData, entrydir.nEntryCount, entrydir.entry.nPairCount, entrydir)
+                addEntry(&nData, entrydir);
 
             }
             while (nData != 1);
