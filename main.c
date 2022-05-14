@@ -15,13 +15,13 @@ typedef struct pairs
 typedef struct entry
 {
     struct pairs pair[10];
-    int nPaircount;
+    int nPairCount;
 };
 
 typedef struct entries
 {
     struct entry Entries[150];
-    int nEntrycount;
+    int nEntryCount;
 };
 
 void getMenu(int *nMenu)
@@ -56,7 +56,7 @@ void toUpper(char * string)
 
 }
 
-void addEntry(int *nData, int nEntryCount, int nPaircount, struct entries entrydir)
+void addEntry(int *nData, int nEntryCount, int nPairCount, struct entries entrydir)
 {
     str tempLang;
     str tempTrans;
@@ -71,13 +71,13 @@ void addEntry(int *nData, int nEntryCount, int nPaircount, struct entries entryd
 
     for (i = 0; i < nEntryCount; i++)
     {
-		for (j = 0; j < nPaircount; j++)
+		for (j = 0; j < nPairCount; j++)
 		{
 			
-			temparr = entrydir.Entries[i].pair[j].translation; 
+			strcpy(temparr, entrydir.Entries[i].pair[j].translation); 
 			if (strcmp(temparr, tempTrans) == 0)
 			{
-				temparr = entrydir.Entries[i].pair[j].language;
+				strcpy(temparr, entrydir.Entries[i].pair[j].language);
 				if (strcmp(temparr, tempLang) == 0)
 					nFound = 1; 
 			}
@@ -85,8 +85,7 @@ void addEntry(int *nData, int nEntryCount, int nPaircount, struct entries entryd
 		}
     }
 
-
-    if (nFound = 1)
+    if (nFound == 1)
     {
         /* ask user if this is a new entry */
         printf("Is this a new entry (Y/N)? ");
@@ -97,14 +96,30 @@ void addEntry(int *nData, int nEntryCount, int nPaircount, struct entries entryd
         {
             /* show all entries */
 
+            for (i = 0; i < nEntryCount; i++)
+            {
+                printf("ENTRY %d\n", i + 1);
+                for (j = 0; j < nPairCount; j++)
+                    printf("%s\t%s\n", entrydir.Entries[i].pair[j].translation, entrydir.Entries[i].pair[j].language); 
+                
+                printf("\n");
+            }
+            nFound = 0;
         }
 
         else if(strcmp(new, "NO") == 0)
-        {
-            nData = 1;
-        }
-
+            *nData = 1;
         
+    }
+
+    if (nFound == 0)
+    {
+        nEntryCount++;
+        nPairCount++;
+
+
+
+
     }
 
 }
@@ -115,6 +130,9 @@ int main()
 {
     int nMenu, nData = 0;
     struct entries entrydir;
+    entrydir.nEntryCount = 0;
+
+    entrydir.entry.nPairCount = 0;
     do
     {
         /* Display and get menu input */
@@ -128,6 +146,7 @@ int main()
             do
             {
                 /* add entry */
+                addEntry(&nData, entrydir.nEntryCount, entrydir.entry.nPairCount, entrydir)
 
             }
             while (nData != 1);
