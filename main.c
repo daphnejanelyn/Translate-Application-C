@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_PAIRS 20
 #define MAX_CHARS 150
@@ -7,19 +8,19 @@
 typedef char str[MAX_CHARS];
 
 
-typedef struct pairs
+struct pairs
 {
     str translation;
     str language;
 }; 
 
-typedef struct entry
+struct entry
 {
     struct pairs pair[10];
     int nPairCount;
 };
 
-typedef struct entries
+struct entries
 {
     struct entry Entries[150];
     int nEntryCount;
@@ -39,6 +40,7 @@ void getMenu(int *nMenu)
     printf("————————————————————————————————————————————————————\n");
     printf("Select Option: ");
     scanf("%d", nMenu);
+    scanf("%[^\n]");
 }
 
 void toUpper(char * string)
@@ -69,6 +71,7 @@ void addEntry(int *nData, struct entries entrydir)
 	int nPairCount = 0; 
     printf("Enter language: ");
     fgets(tempLang, MAX_PAIRS, stdin);
+
     printf("Enter translation: ");
     fgets(tempTrans, MAX_PAIRS, stdin);
 
@@ -92,7 +95,7 @@ void addEntry(int *nData, struct entries entrydir)
     {
         /* ask user if this is a new entry */
         printf("Is this a new entry (Y/N)? ");
-        scanf(" %s", &new);
+        scanf("%s", new);
 
         toUpper(new);
         if (strcmp(new, "YES") == 0)
@@ -140,7 +143,7 @@ int main()
     do
     {
         /* Display and get menu input */
-        displayMenu(&nMenu);
+        getMenu(&nMenu);
 
         if (nMenu == 1)
         {
