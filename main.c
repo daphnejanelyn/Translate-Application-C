@@ -8,23 +8,23 @@
 typedef char str[MAX_CHARS];
 
 
-struct pairs
+typedef struct pairs
 {
     str translation;
     str language;
-}; 
+}pair; 
 
-struct entry
+typedef struct entry
 {
     struct pairs pair[10];
     int nPairCount;
-};
+}entry;
 
-struct entries
+typedef struct entries
 {
     struct entry Entries[150];
     int nEntryCount;
-};
+}entries;
 
 void getMenu(int *nMenu)
 {
@@ -59,7 +59,7 @@ void toUpper(char * string)
 
 }
 
-void addEntry(int *nData, struct entries entrydir)
+void addEntry(int *nData, entries* entrydir)
 {
     str tempLang;
     str tempTrans;
@@ -67,7 +67,7 @@ void addEntry(int *nData, struct entries entrydir)
     int i, j;
 	str temparr;
 	int nFound = 0;
-	int nEntryCount = entrydir.nEntryCount; 
+	int nEntryCount = entrydir->nEntryCount; 
 	int nPairCount = 0; 
     printf("Enter language: ");
     fgets(tempLang, MAX_PAIRS, stdin);
@@ -80,10 +80,10 @@ void addEntry(int *nData, struct entries entrydir)
 		for (j = 0; j < nPairCount; j++)
 		{
 			
-			strcpy(temparr, entrydir.Entries[i].pair[j].translation); 
+			strcpy(temparr, entrydir->(Entries+i)->(pair + j)->translation); 
 			if (strcmp(temparr, tempTrans) == 0)
 			{
-				strcpy(temparr, entrydir.Entries[i].pair[j].language);
+				strcpy(temparr, entrydir->(Entries+i)->(pair + j)->language);
 				if (strcmp(temparr, tempLang) == 0)
 					nFound = 1; 
 			}
@@ -106,7 +106,7 @@ void addEntry(int *nData, struct entries entrydir)
             {
                 printf("ENTRY %d\n", i + 1);
                 for (j = 0; j < nPairCount; j++)
-                    printf("%s\t%s\n", entrydir.Entries[i].pair[j].translation, entrydir.Entries[i].pair[j].language); 
+                    printf("%s\t%s\n", entrydir->(Entries+i)->(pair + j)->translation, entrydir->(Entries+i)->(pair + j)->language); 
                 
                 printf("\n");
             }
@@ -124,8 +124,8 @@ void addEntry(int *nData, struct entries entrydir)
         nPairCount++;
 
     }
-	entrydir.nEntryCount = nEntryCount;
-	entrydir.Entries[nEntryCount - 1].nPairCount = nPairCount;
+	entrydir->nEntryCount = nEntryCount;
+	entrydir->(Entries+ (nEntryCount - 1-))>nPairCount = nPairCount;
 }
 
 
@@ -133,7 +133,7 @@ void addEntry(int *nData, struct entries entrydir)
 int main()
 {
     int nMenu, nData = 0;
-    struct entries entrydir;
+    entries entrydir;
     entrydir.nEntryCount = 0;
 	
 	int i;
@@ -153,7 +153,7 @@ int main()
             do
             {
                 /* add entry */
-                addEntry(&nData, entrydir);
+                addEntry(&nData, &entrydir);
 
             }
             while (nData != 1);
