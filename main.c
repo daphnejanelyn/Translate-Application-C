@@ -69,7 +69,7 @@ addEntry (directorytype * directory, int *nData)
 {
     str language; 
     str translation;
-    int entry, pair, nCount = 0;
+    int entry, pair;
     int nFound = 0; 
     int nEntryCount, nPairCount;
     str newEntry, newPair;
@@ -97,30 +97,34 @@ addEntry (directorytype * directory, int *nData)
     {
         // Display first entries with the same info
         nEntryCount = directory->nEntryCount;
-        nPairCount = directory->entries[nEntryCount -1].nPairCount;
         for (entry = 0; entry < nEntryCount; entry++)
         {
-            for  (pair = 0; pair < nPairCount; pair++)
+            nPairCount = directory->entries[entry].nPairCount;
+            for (pair = 0; pair < nPairCount; pair++)
             {
                 if ((strcmp(translation, directory->entries[entry].pair[pair].translation) == 0) 
                 && (strcmp (language, directory->entries[entry].pair[pair].language) == 0))
                 {
                     displayEntry(*directory, entry, nPairCount);
-                    nCount++;
+                    pair = nPairCount;
                 }
             }
             printf ("\n");
         }
+            
 
-        /* Then display all other entries
-        for (entry = 0; entry < nEntryCount - nCount; entry++)
+        /*Then display all other entries
+        for (entry = 0; entry < nEntryCount; entry++)
         {
-            printf ("Language\tTranslation\n");
-            for  (pair = 0; pair < nPairCount; pair++)
+            nPairCount = directory->entries[entry].nPairCount;
+            for (pair = 0; pair < nPairCount; pair++)
             {
-                if ((strcmp(translation, directory->entries[entry].pair[pair].translation) != 0) 
-                || (strcmp (language, directory->entries[entry].pair[pair].language) != 0))
-                    displayEntry(*directory, entry, nPairCount);  
+                if ((strcmp (language, directory->entries[entry].pair[pair].language) != 0)
+                || (strcmp(translation, directory->entries[entry].pair[pair].translation) != 0))
+                {
+                    displayEntry(*directory, entry, nPairCount);
+                    pair = nPairCount;
+                }  
             }
             printf ("\n");
         }*/
@@ -217,6 +221,8 @@ addTranslation(directorytype *directory, int *nData)
     int entry, pair, nCount = 0; 
     int tempentry [MAXENTRY];
     int i, index;
+    int newentry, nPairCount;
+    str newPair;
 
     printf ("Input Language-Translation pair:");
     scanf ("%s %s", language, translation); 
@@ -253,14 +259,85 @@ addTranslation(directorytype *directory, int *nData)
         }
 
         // if count == 1, language translation pair is asked and added to the same entry
+        if (nCount == 1 && directory->entries[tempentry[0]].nPairCount < 10)
+        {
+            printf ("Input Language-Translation pair:");
+            scanf ("%s %s", language, translation); 
+
+            // Add pair count and Append to current entry
+            directory->entries[tempentry[0]].nPairCount += 1; 
+            nPairCount = directory->entries[tempentry[0]].nPairCount;
+
+            strcpy (directory->entries[tempentry[0]].pair[nPairCount - 1].language, language);
+            strcpy (directory->entries[tempentry[0]].pair[nPairCount - 1].translation, translation);
+
+            do
+            {
+                printf ("Do you want to encode another pair(Yes/No)?");
+                scanf ("%s", newPair);
+                toUpper(newPair);
+
+                if (strcmp (newPair, "YES") == 0)
+                {
+                    // Enter new pair
+                    printf ("Input Language-Translation pair:");
+                    scanf ("%s %s", language, translation);
+                    
+                    // Add pair count and Append to current entry
+                    directory->entries[tempentry[0]].nPairCount += 1; 
+                    nPairCount = directory->entries[tempentry[0]].nPairCount;
+
+                    strcpy (directory->entries[tempentry[0]].pair[nPairCount - 1].language, language);
+                    strcpy (directory->entries[tempentry[0]].pair[nPairCount - 1].translation, translation);
+                }
+
+            } while (strcmp (newPair, "YES") == 0 && directory->entries[tempentry[0]].nPairCount <= 10);
+            *nData = 1; 
+        }
         /* if count > 1, user chooses what entry he chooses and  
         langauge translation pair is added to the entry he chooses*/
-        
+        else if (nCount > 1 && directory->entries[tempentry[0]].nPairCount < 10)
+        {
+            printf ("Choose Entry to add a language-translation pair:");
+            scanf ("%d", &newentry);
 
+            printf ("Input Language-Translation pair:");
+            scanf ("%s %s", language, translation); 
+
+            // Add pair count and Append to chosen entry
+            directory->entries[tempentry[newentry -1]].nPairCount += 1; 
+            nPairCount = directory->entries[tempentry[newentry -1]].nPairCount;
+
+            strcpy (directory->entries[tempentry[newentry -1]].pair[nPairCount - 1].language, language);
+            strcpy (directory->entries[tempentry[newentry -1]].pair[nPairCount - 1].translation, translation);
+            do
+            {
+                printf ("Do you want to encode another pair(Yes/No)?");
+                scanf ("%s", newPair);
+                toUpper(newPair);
+
+                if (strcmp (newPair, "YES") == 0)
+                {
+                    // Enter new pair
+                    printf ("Input Language-Translation pair:");
+                    scanf ("%s %s", language, translation);
+                    
+                    // Add pair count and Append to current entry
+                    directory->entries[tempentry[newentry -1]].nPairCount += 1; 
+                    nPairCount = directory->entries[tempentry[newentry -1]].nPairCount;
+
+                    strcpy (directory->entries[tempentry[newentry -1]].pair[nPairCount - 1].language, language);
+                    strcpy (directory->entries[tempentry[newentry -1]].pair[nPairCount - 1].translation, translation);
+                }
+            } while (strcmp (newPair, "YES") == 0 && directory->entries[tempentry[newentry -1]].nPairCount <= 10);
+            *nData = 1; 
+        }
     }
+}
 
-    
-
+void
+displayAll (directorytype *directory)
+{
 
 }
 
