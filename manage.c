@@ -670,3 +670,41 @@ searchTranslation(directorytype * directory)
     else printf ("No Entry Match\n");
     
 }
+
+void
+exportData ()
+{
+    // save all data into a text file 
+    // user specifies filename (filename has 30 char max with extension)
+    // use w as mode (since data will be overwritten)
+    /*
+        Formatting to be Used: 
+        English: love<next line>
+        Tagalog: mahal<next line>
+        Hiligaynon: gugma<next line>
+        page 4
+        Cebuano: gugma<next line>
+        Spanish: amor<next line>
+        Chinese: ai<next line>
+        <nextline>
+        Tagalog: mahal<nextline>
+        Kapampangan: mal<nextline>
+        Cebuano: mahal<nextline>
+        English: expensive<nextline>
+        Chinese: gui<nextline>
+        <nextline>
+        <end of file>
+    */
+    
+}
+
+void
+importData ()
+{
+    // open text file
+    // read data stored in text file 
+    // user inputs filename to load 
+    // retrieves entry by entry 
+    // checks if entry is already present in the list of entries
+
+}
