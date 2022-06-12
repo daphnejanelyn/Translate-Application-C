@@ -51,6 +51,7 @@ void searchTranslation(directorytype * directory);
 void getLanguage (int *nOption);
 void exportData (directorytype directory);
 void importData (directorytype * directory);
+void importDataTools(directorytype *directory);
 void split(char *sentence, int *pCount, longStr words[MAXWORDS]);
 int checkLanguages(languagetype * language, longStr lang);
 int findWord(languagetype * language, directorytype * directory, int nCount, longStr words[]);
@@ -137,7 +138,7 @@ main ()
 
         if (nMenu == 2)
         {
-            importData (&directory);
+            importDataTools (&directory);
             do
             {
                 getLanguage(&nOption);
@@ -556,7 +557,10 @@ displayAll (directorytype * directory)
     char cOption;
     char cTemp;
 
-    do
+    if (nEntryCount == 0)
+        printf("There are no entries to be displayed\n");
+
+    while (i < nEntryCount)
     {
         sortAlphabetical(directory, i);
         nPairCount = directory->entries[i].nPairCount;
@@ -581,7 +585,7 @@ displayAll (directorytype * directory)
             printf("Invalid Option");
             
     }
-    while (i < nEntryCount);
+ 
 }
 
 void
@@ -864,7 +868,8 @@ exportData (directorytype directory)
             nPairCount = directory.entries[i].nPairCount;
             for (pair = 0; pair < nPairCount; pair++)
                 fprintf (savedata, "%s: %s\n", directory.entries[i].pair[pair].language, directory.entries[i].pair[pair].translation);
-            fprintf(savedata, "\n");
+            if (i != nEntryCount - 1)
+                fprintf(savedata, "\n");
         }
     }
     else
@@ -875,32 +880,6 @@ exportData (directorytype directory)
     fclose(savedata);
 
 }
-
-/* void
-importData(directorytype * directory)
-{
-    FILE *existdata;
-    char filename[40];
-
-    printf("Input filename: ");
-    getInput(filename);
-    existdata = fopen(filename, "r");
-
-    if (existdata != NULL)
-    {
-
-    }
-
-    else
-    {
-        printf("File cannot be opened.\n");
-    }
-    
-
-
-
-}  */
-
 
 
 void
@@ -914,9 +893,9 @@ importData (directorytype * directory)
     str language;
     str translation;
     int langlength;
-    str checkEntry;
+    str checkEntry, checkEntry2;
     int newEntry = 0;
-    str tempword, choice;
+    str tempword, choice, tempspace;
     int i;
 
 
@@ -944,23 +923,26 @@ importData (directorytype * directory)
                     strcpy (temp.pair[nPairCount].language, language);
           
                     // store to an array
-                    fscanf (existdata, "%s", translation);
+                    fscanf (existdata, "%c", tempspace);
+                    fscanf (existdata, "%[^\n]s", translation);
                     strcpy (temp.pair[nPairCount].translation, translation);
                     //fgets(translation, MAXCHAR, existdata);
-                    (temp.nPairCount)++;
-                    nPairCount = temp.nPairCount;
+                    nPairCount++;
+                    temp.nPairCount = nPairCount;
              
                 }
                 fgets (checkEntry, 2, existdata);
+                fgets (checkEntry2, 2, existdata);
+                
       
-                if (strcmp(checkEntry, "\n") == 0)
+                if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
                 {
                     // indicates a new entry
                     newEntry = 1;
                 }
                 else 
                 {
-                    strcpy (language, checkEntry);
+                    strcpy (language, checkEntry2);
                     fscanf (existdata, "%s", tempword);
                     strcat(language, tempword);
                     
@@ -969,21 +951,22 @@ importData (directorytype * directory)
                     strcpy (temp.pair[nPairCount].language, language);
                 
                     // store to an array
-                    fscanf (existdata, "%s", translation);
+                    fscanf (existdata, "%c", tempspace);
+                    fscanf (existdata, "%[^\n]s", translation);
                     strcpy (temp.pair[nPairCount].translation, translation);
 
-                    (temp.nPairCount)++;
-                    nPairCount = temp.nPairCount;
+                    nPairCount++;
+                    temp.nPairCount = nPairCount;
 
                 }
             } while (newEntry == 0);
 
-            for (i = 0; i < nPairCount; i++)
-            {
-                printf("%s: %s\n", temp.pair[i].language, temp.pair[i].translation);
-            }
             if (nEntryCount > 0)
             {
+                for (i = 0; i < nPairCount; i++)
+                {
+                    printf("%s: %s\n", temp.pair[i].language, temp.pair[i].translation);
+                }
                 printf ("Do you want to append this to your current list of entries? ");
                 getInput (choice);
                 toUpper (choice);
@@ -1042,6 +1025,102 @@ getLanguage(int *nOption)
     printf("Select Option: ");
     scanf("%d", nOption);
     scanf("%c", &temp);
+}
+
+void
+importDataTools(directorytype *directory)
+{
+    char filename[40];
+    FILE *existdata;
+    entrytype temp; 
+    int nEntryCount = directory->nEntryCount;
+    int nPairCount;
+    str language;
+    str translation;
+    int langlength;
+    str checkEntry, checkEntry2;
+    int newEntry = 0;
+    str tempword, tempspace;
+    int i;
+
+
+    // open text file
+    printf("Input filename: ");
+    getInput(filename);
+    existdata = fopen(filename , "r");
+
+    if (existdata != NULL)
+    {
+        // until it encounters a double enter, that's the time that it is considered another entry
+        while (!feof(existdata))
+        {
+            temp.nPairCount = 0;
+            nPairCount = temp.nPairCount;
+            newEntry = 0;
+            strcpy(checkEntry, "");
+            do
+            {
+                if (nPairCount == 0)
+                {
+                    fscanf (existdata, "%s", language);
+                    langlength = strlen(language);
+                    language[langlength - 1] = '\0';
+                    strcpy (temp.pair[nPairCount].language, language);
+          
+                    // store to an array
+                    fscanf (existdata, "%c", tempspace);
+                    fscanf (existdata, "%[^\n]s", translation);
+                    strcpy (temp.pair[nPairCount].translation, translation);
+                    //fgets(translation, MAXCHAR, existdata);
+                    nPairCount++;
+                    temp.nPairCount = nPairCount;
+             
+                }
+                fgets (checkEntry, 2, existdata);
+                fgets (checkEntry2, 2, existdata);
+                
+      
+                if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
+                {
+                    // indicates a new entry
+                    newEntry = 1;
+                }
+                else 
+                {
+                    strcpy (language, checkEntry2);
+                    fscanf (existdata, "%s", tempword);
+                    strcat(language, tempword);
+                    
+                    langlength = strlen(language);
+                    language[langlength - 1] = '\0';
+                    strcpy (temp.pair[nPairCount].language, language);
+                
+                    // store to an array
+                    fscanf (existdata, "%c", tempspace);
+                    fscanf (existdata, "%[^\n]s", translation);
+                    strcpy (temp.pair[nPairCount].translation, translation);
+
+
+                    nPairCount++;
+                    temp.nPairCount = nPairCount;
+                }
+            } while (newEntry == 0);
+
+            directory->entries[nEntryCount].nPairCount = nPairCount;
+            for (i = 0; i < nPairCount; i++)
+            {
+                strcpy(directory->entries[nEntryCount].pair[i].language, temp.pair[i].language);
+                strcpy(directory->entries[nEntryCount].pair[i].translation, temp.pair[i].translation);
+            }
+            (directory->nEntryCount)++;
+            nEntryCount = directory->nEntryCount;
+            
+        } 
+    }
+    else printf("File cannot be opened\n");
+
+    fclose(existdata);
+    
 }
 
 void 
@@ -1112,7 +1191,6 @@ findWord(languagetype * language, directorytype * directory, int nCount, longStr
                         i = nLangCount;
                         strcpy (language->languages[i], directory->entries[entry].pair[pair].language);
                         nLangCount++;
-                        printf ("Count increment: %d\n", nLangCount);
                     }
                     else
                     {
@@ -1189,19 +1267,25 @@ simpleTranslation (directorytype *directory)
     int entry, pair, nPairCount; 
     int nEntryCount = directory->nEntryCount;
     int translated = 0;
-
+    int nCycle = 0;
+    
+    printf ("Enter language of source text:");
+    getInput(langsource);
+    printf("Enter source text: ");
+    getInput(source);
+    printf("Enter language to be translated to: ");
+    getInput(langoutput);
+    
     do
     {
-        printf ("Enter language of source text:");
-        getInput(langsource);
-        printf("Enter source text: ");
-        getInput(source);
-        printf("Enter language to be translated to: ");
-        getInput(langoutput);
+        if (nCycle > 0)
+        {
+            printf("Enter source text: ");
+            getInput(source);
+        }
 
         split (source, &nCount, words);
 
-        printf ("\n");
 
         for (word = 0; word < nCount; word++)
         {
@@ -1233,6 +1317,8 @@ simpleTranslation (directorytype *directory)
         printf("Do you want to translate another text in %s to %s? (Yes/No)", langsource, langoutput);
         getInput(choice);
         toUpper(choice);
+        
+        nCycle++;
         
     } while (strcmp(choice, "YES") == 0);
 
