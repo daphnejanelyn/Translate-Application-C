@@ -876,6 +876,33 @@ exportData (directorytype directory)
 
 }
 
+/* void
+importData(directorytype * directory)
+{
+    FILE *existdata;
+    char filename[40];
+
+    printf("Input filename: ");
+    getInput(filename);
+    existdata = fopen(filename, "r");
+
+    if (existdata != NULL)
+    {
+
+    }
+
+    else
+    {
+        printf("File cannot be opened.\n");
+    }
+    
+
+
+
+}  */
+
+
+
 void
 importData (directorytype * directory)
 {
@@ -892,10 +919,11 @@ importData (directorytype * directory)
     str tempword, choice;
     int i;
 
+
     // open text file
     printf("Input filename: ");
     getInput(filename);
-    existdata = fopen(filename, "r");
+    existdata = fopen(filename , "r");
 
     if (existdata != NULL)
     {
@@ -904,62 +932,70 @@ importData (directorytype * directory)
         {
             temp.nPairCount = 0;
             nPairCount = temp.nPairCount;
-
+            newEntry = 0;
+            strcpy(checkEntry, "");
             do
             {
-                if (nPairCount = 0)
+                if (nPairCount == 0)
                 {
                     fscanf (existdata, "%s", language);
                     langlength = strlen(language);
                     language[langlength - 1] = '\0';
                     strcpy (temp.pair[nPairCount].language, language);
-
+          
                     // store to an array
                     fscanf (existdata, "%s", translation);
                     strcpy (temp.pair[nPairCount].translation, translation);
-                    
-                    temp.nPairCount++;
+                    //fgets(translation, MAXCHAR, existdata);
+                    (temp.nPairCount)++;
                     nPairCount = temp.nPairCount;
+             
                 }
-                    fgets (checkEntry, 1, existdata);
-
-                    if (strcmp(checkEntry, "\n"))
-                    {
-                        // indicates a new entry
-                        newEntry = 1;
-                    }
-                    else 
-                    {
-                        strcpy (language, checkEntry);
-                        fscanf (existdata, "%s", tempword);
-                        strcat(language, tempword);
-                        
-                        langlength = strlen(language);
-                        language[langlength - 1] = '\0';
-                        strcpy (temp.pair[nPairCount].language, language);
+                fgets (checkEntry, 2, existdata);
+      
+                if (strcmp(checkEntry, "\n") == 0)
+                {
+                    // indicates a new entry
+                    newEntry = 1;
+                }
+                else 
+                {
+                    strcpy (language, checkEntry);
+                    fscanf (existdata, "%s", tempword);
+                    strcat(language, tempword);
                     
-                    
-                        // store to an array
-                        fscanf (existdata, "%s", translation);
-                        strcpy (temp.pair[nPairCount].translation, translation);
+                    langlength = strlen(language);
+                    language[langlength - 1] = '\0';
+                    strcpy (temp.pair[nPairCount].language, language);
+                
+                    // store to an array
+                    fscanf (existdata, "%s", translation);
+                    strcpy (temp.pair[nPairCount].translation, translation);
 
-                        temp.nPairCount++;
-                        nPairCount = temp.nPairCount;
+                    (temp.nPairCount)++;
+                    nPairCount = temp.nPairCount;
 
-                    }
+                }
             } while (newEntry == 0);
 
             for (i = 0; i < nPairCount; i++)
             {
                 printf("%s: %s\n", temp.pair[i].language, temp.pair[i].translation);
             }
-
-            printf ("Do you want to append this to your current list of entries? ");
-            getInput (choice);
-            toUpper (choice);
+            if (nEntryCount > 0)
+            {
+                printf ("Do you want to append this to your current list of entries? ");
+                getInput (choice);
+                toUpper (choice);
+            }
+            else
+            {
+                strcpy(choice, "YES");
+            }
 
             if (strcmp (choice, "YES") == 0)
             {
+                directory->entries[nEntryCount].nPairCount = nPairCount;
                 for (i = 0; i < nPairCount; i++)
                 {
                     strcpy(directory->entries[nEntryCount].pair[i].language, temp.pair[i].language);
