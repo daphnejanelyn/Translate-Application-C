@@ -2,15 +2,11 @@
 #include <string.h>
 #include "translate.h"
 
-/* 
-*
-*
-*
-MANAGE DATA FUNCTIONS 
-*
-*
+/*  getInput gets a string input from the user and 
+    can get input with spaces between strings
+    @param string - the array that the string's 
+           characters will be stored in
 */
-
 void
 getInput(char * string) 
 {
@@ -30,10 +26,14 @@ getInput(char * string)
   string[i] = '\0';
 }
 
+/*  getMenu displays the menu options and asks 
+    the user to choose one
+    @param *nMenu - the menu option selected
+*/
 void 
 getMenu(int *nMenu)
 {
-    char temp;
+    char cTemp;
     printf("\n\t\tMAIN MENU\n");
     printf("_______________________________________________\n");
     printf("\'Manage Data\' allows you to  \n");
@@ -46,13 +46,17 @@ getMenu(int *nMenu)
     printf("_______________________________________________\n");
     printf("Select Option: ");
     scanf("%d", nMenu);
-    scanf("%c", &temp);
+    scanf("%c", &cTemp);
 }
 
+/*  getData displays the Manage Data options and asks 
+    the user to choose one
+    @param *nData is the Manage Data option selected
+*/
 void
 getData(int *nData)
 {
-    char temp;
+    char cTemp;
     printf("\n\t\tMANAGE DATA\n");
     printf("_______________________________________________\n");
     printf("To select an option, enter the key enclosed in\n");
@@ -71,127 +75,172 @@ getData(int *nData)
     printf("_______________________________________________\n");
     printf("Select Option: ");
     scanf("%d", nData);
-    scanf("%c", &temp);
+    scanf("%c", &cTemp);
 }
 
+/*  toUpper capitalizes all lowercase alphabetical letters
+    @param string - the string to be capitalized
+*/
 void 
 toUpper(char * string)
 {
     int i;
-    int length = strlen(string);
+    int nLength = strlen(string);
 
-    for (i = 0; i < length; i++)
+    for (i = 0; i < nLength; i++)
     {
         if (string[i] >= 'a' && string[i] <= 'z')
             string[i] -= 32;
     }
 }
 
+
+/*  displayEntry displays a single entry from the directory 
+    @param directory - the structure that contains the list
+                       of entries
+    @param nEntryIndex - the index of the entry in directory 
+                         to be displayed
+    @param nPairCount - the number of language-translation 
+                        pairs in an entry
+
+    Pre-conditions: index is between 0 to the number of entries
+                    in directory minus 1, inclusive
+                    nPairCount is between 0 to 10, inclusive
+*/
 void 
-displayEntry (directorytype directory, int index, int nPairCount)
+displayEntry (directorytype directory, 
+              int nEntryIndex, 
+              int nPairCount)
 {
     int pair;
     printf ("%-25s", "    |LANGUAGE");
     printf ("%-20s", "|TRANSLATION");
     printf ("%2s\n", "|");
     for (pair = 0; pair < nPairCount; pair++)
-       printf ("(%d) |%-20s|%-20s|\n", pair + 1, directory.entries[index].pair[pair].language, directory.entries[index].pair[pair].translation);
+       printf ("(%d) |%-20s|%-20s|\n", pair + 1, directory.entries[nEntryIndex].pair[pair].language, directory.entries[nEntryIndex].pair[pair].translation);
 }
 
+/*  getNewPair asks the user for a language-translation 
+    pair and appends it to an entry in the directory 
+    structure
+    @param directory - the structure that contains the 
+                       list of entries
+    @param nEntryIndex - the index of the entry in directory 
+                         that will be appended to
+
+    Pre-condition: nEntryIndex is between 0 to 149, inclusive
+ */
 void
-getNewPair(directorytype * directory, int entryIndex)
+getNewPair(directorytype * directory, 
+           int nEntryIndex)
 {
     str language, translation;
     int nPairCount; 
 
-    printf ("Enter Language:");
-    
+    /* Enter new pair */
+    printf ("Enter Language: ");
     getInput(language);
 
-    printf ("Enter translation:");
+    printf ("Enter translation: ");
     getInput(translation);
 
-    /* Add pair count and Append to current entry*/
-    directory->entries[entryIndex].nPairCount += 1; 
-    nPairCount = directory->entries[entryIndex].nPairCount;
+    /* Incremend pair count */
+    directory->entries[nEntryIndex].nPairCount += 1; 
+    nPairCount = directory->entries[nEntryIndex].nPairCount;
 
-    strcpy (directory->entries[entryIndex].pair[nPairCount - 1].language, language);
-    strcpy (directory->entries[entryIndex].pair[nPairCount - 1].translation, translation);
+    /* Append pair to the entry */
+    strcpy (directory->entries[nEntryIndex].pair[nPairCount - 1].language, language);
+    strcpy (directory->entries[nEntryIndex].pair[nPairCount - 1].translation, translation);
 }
 
+/*  addEntry asks the user for a language-translation 
+    pair and creates a new entry if the pair does not 
+    exist or if it exists and the user still wants to 
+    create a new entry
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void 
 addEntry (directorytype * directory)
 {
-    str language; 
-    str translation;
-    int entry, pair;
+    str language, translation;
+    int nEntry, nPair;
     int nFound = 0; 
     int nEntryCount, nPairCount; 
     str newEntry, newPair;
 
-    /* Ask for Input */
-    printf ("Enter Language:");
+    /* Enter new pair */
+    printf ("Enter Language: ");
     getInput(language);
 
-    printf ("Enter translation:");
+    printf ("Enter translation: ");
     getInput(translation);
 
     /* Check if pair exists*/
-    for (entry = 0; entry < MAXENTRY; entry++)
+    for (nEntry = 0; nEntry < MAXENTRY; nEntry++)
     {
-        for  (pair = 0; pair < MAXPAIR; pair++)
+        for  (nPair = 0; nPair < MAXPAIR; nPair++)
         {
-            if ((strcmp(translation, directory->entries[entry].pair[pair].translation) == 0) 
-            && (strcmp (language, directory->entries[entry].pair[pair].language) == 0))
+            if ((strcmp(translation, directory->entries[nEntry].pair[nPair].translation) == 0) 
+            && (strcmp (language, directory->entries[nEntry].pair[nPair].language) == 0))
                 nFound = 1; 
         }
     }
 
-    /* if nFound == 1, show entries with the same information as the one entered first*/
+    /* If pair found, display entries where pair has been found */
     if (nFound == 1)
     {
         /* Display first entries with the same info*/
         nEntryCount = directory->nEntryCount;
-        for (entry = 0; entry < nEntryCount; entry++)
+        for (nEntry = 0; nEntry < nEntryCount; nEntry++)
         {
-            nPairCount = directory->entries[entry].nPairCount;
-            for (pair = 0; pair < nPairCount; pair++)
+            nPairCount = directory->entries[nEntry].nPairCount;
+            for (nPair = 0; nPair < nPairCount; nPair++)
             {
-                if ((strcmp(translation, directory->entries[entry].pair[pair].translation) == 0) 
-                && (strcmp (language, directory->entries[entry].pair[pair].language) == 0))
+                if ((strcmp(translation, directory->entries[nEntry].pair[nPair].translation) == 0) 
+                && (strcmp (language, directory->entries[nEntry].pair[nPair].language) == 0))
                 {
-                    displayEntry(*directory, entry, nPairCount);
-                    pair = nPairCount;
+                    displayEntry(*directory, nEntry, nPairCount);
+                    nPair = nPairCount;
                 }
             }
             printf ("\n");
         }
 
-        printf ("Is this a new entry (Yes or No)?");
+        /* Ask user if they still want to add the pair as a new entry */
+        printf ("Is this a new entry (Yes/No)?");
         getInput(newEntry);
 
         toUpper(newEntry);
 
-
+        /* Add pair as a new entry */
         if (strcmp (newEntry, "YES") == 0)
         {
+            /* Increment entry count */
             directory->nEntryCount += 1;
             nEntryCount = directory->nEntryCount;
+
+            /* Increment pair count in new entry */
             directory->entries[nEntryCount -1].nPairCount += 1; 
             nPairCount = directory->entries[nEntryCount -1].nPairCount;
 
+            /* Append pair to new entry */
             strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].language, language);
             strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].translation, translation);
 
-            /* do while user does not choose NO*/
+            /* Exit loop when user does not want to 
+               add another pair to the entry */
             do
             {
-                printf ("Do you want to encode another pair(Yes/No)?");
+                /* Ask the user if they want to encode another pair in the entry */
+                printf ("Do you want to encode another pair (Yes/No)?");
                 getInput(newPair);
                 toUpper(newPair);
 
                 if (strcmp (newPair, "YES") == 0)
                 {
+                    /* Ask user for new pair and append to 
+                       the current entry */
                     getNewPair(directory, nEntryCount - 1);
                 }
 
@@ -210,16 +259,19 @@ addEntry (directorytype * directory)
         strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].language, language);
         strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].translation, translation);
 
-        /* do while user does not choose NO*/
+        /* Exit loop when user does not want to 
+           add another pair to the entry */
         do
         {
-            printf ("Do you want to encode another pair(Yes/No)?");
+            /* Ask the user if they want to encode another pair in the entry */
+            printf ("Do you want to add another pair to this entry (Yes/No)?");
             getInput(newPair);
             toUpper(newPair);
 
             if (strcmp (newPair, "YES") == 0)
             {
-                /* Enter new pair*/
+                /* Ask user for new pair and append to 
+                   the current entry */
                 getNewPair(directory, nEntryCount - 1);
             }
 
@@ -228,6 +280,13 @@ addEntry (directorytype * directory)
     }
 }
 
+/*  addTranslation asks the user for a language-translation
+    pair. If the pair exists in an entry, the user may add
+    another pair for that entry. Otherwise, the user must
+    go back and select the Add Entry option first. 
+    @param directory - the structure that contains the list
+                       of entries  
+*/
 void
 addTranslation(directorytype * directory)
 {
@@ -239,14 +298,14 @@ addTranslation(directorytype * directory)
     str newPair;
     char temp;
     
-    /* Enter new pair*/
+    /* Enter new pair */
     printf ("Enter Language:");
     getInput (language);
 
     printf ("Enter translation:");
     getInput (translation);
 
-    /* Check if entry exists*/
+    /* Check if entry with that pair exists*/
     for (entry = 0; entry < MAXENTRY; entry++)
     {
         for  (pair = 0; pair < MAXPAIR; pair++)
@@ -259,13 +318,13 @@ addTranslation(directorytype * directory)
             }
         }
     }
-    /* entry does not exist, when count is equal to 0 */
+    /* If nCount is 0, entry does not exist */
     if (nCount == 0)
     {
         printf ("Entry does not exist.\n");
-        printf ("Please press the Add Entry Option");
+        printf ("Please select the Add Entry Option\n");
     }   
-    /* entry exist, count is > 0*/
+    /* If nCount is greater than 0, entry exists */
     else if (nCount > 0)
     {
         for (i = 0; i < nCount; i++)
@@ -276,7 +335,8 @@ addTranslation(directorytype * directory)
             printf ("\n");
         }
 
-        /* if count == 1, language translation pair is asked and added to the same entry*/
+        /* If the pair only exists in one entry
+           new pair is asked and added to the same entry */
         if (nCount == 1 && directory->entries[tempentry[0]].nPairCount < 10)
         {
             /* Enter new pair*/
@@ -286,13 +346,16 @@ addTranslation(directorytype * directory)
             printf ("Enter translation:");
             getInput (translation);
 
-            /* Add pair count and Append to current entry*/
+            /* Increment pair count */
             directory->entries[tempentry[0]].nPairCount += 1; 
             nPairCount = directory->entries[tempentry[0]].nPairCount;
 
+            /* Append pair to the entry */
             strcpy (directory->entries[tempentry[0]].pair[nPairCount - 1].language, language);
             strcpy (directory->entries[tempentry[0]].pair[nPairCount - 1].translation, translation);
 
+            /* Exit loop when user does not want to 
+               add another pair to the entry */
             do
             {
                 printf ("Do you want to encode another pair(Yes/No)?");
@@ -301,14 +364,14 @@ addTranslation(directorytype * directory)
 
                 if (strcmp (newPair, "YES") == 0)
                 {
-                    /*Enter new pair*/
+                    /* Ask user for new pair and append to 
+                       the current entry */
                     getNewPair(directory, tempentry[0]);
                 }
 
             } while (strcmp (newPair, "YES") == 0 && directory->entries[tempentry[0]].nPairCount <= 10);
         }
-        /* if count > 1, user chooses what entry he chooses and  
-        langauge translation pair is added to the entry he chooses*/
+        /* If the pair appears in multiple entries, user will choose an entry */
         else if (nCount > 1 && directory->entries[tempentry[0]].nPairCount < 10)
         {
             printf ("Choose Entry to add a language-translation pair:");
@@ -322,12 +385,16 @@ addTranslation(directorytype * directory)
             printf ("Enter translation:");
             getInput (translation);
 
-            /* Add pair count and Append to chosen entry*/
+            /* Add pair count */
             directory->entries[tempentry[newentry -1]].nPairCount += 1; 
             nPairCount = directory->entries[tempentry[newentry -1]].nPairCount;
 
+            /* Append pair to the entry */
             strcpy (directory->entries[tempentry[newentry -1]].pair[nPairCount - 1].language, language);
             strcpy (directory->entries[tempentry[newentry -1]].pair[nPairCount - 1].translation, translation);
+        
+            /* Exit loop when user does not want to 
+               add another pair to the entry */
             do
             {
                 printf ("Do you want to encode another pair(Yes/No)?");
@@ -336,7 +403,8 @@ addTranslation(directorytype * directory)
 
                 if (strcmp (newPair, "YES") == 0)
                 {
-                    /* Enter new pair*/
+                    /* Ask user for new pair and append to 
+                       the current entry */
                     getNewPair(directory, tempentry[newentry -1]);
                 }
             } while (strcmp (newPair, "YES") == 0 && directory->entries[tempentry[newentry -1]].nPairCount <= 10);
@@ -344,36 +412,50 @@ addTranslation(directorytype * directory)
     }
 }
 
-
+/*  sortAlphabetical sorts the language-translation pairs
+    in a single entry in alphabetical order
+    @param directory - the structure that contains the list
+                       of entries  
+    @param nEntryIndex - the index of the entry in directory 
+                         that will be appended to
+    Pre-condition: nEntryIndex is between 0 to 149, inclusive
+*/
 void 
-sortAlphabetical(directorytype * directory, int entryIndex)
+sortAlphabetical(directorytype * directory, int nEntryIndex)
 {
     int nPairCount; 
     int i, j, position;
     str temp[2];
 
-    nPairCount = directory->entries[entryIndex].nPairCount;
+    nPairCount = directory->entries[nEntryIndex].nPairCount;
 
     for(i = 0; i < nPairCount - 1; i++)
 	{
 		position = i;
 		for(j = i + 1; j < nPairCount; j++)
 		{
-			if(strcmp (directory->entries[entryIndex].pair[position].language, directory->entries[entryIndex].pair[j].language) > 0)
+			if(strcmp (directory->entries[nEntryIndex].pair[position].language, directory->entries[nEntryIndex].pair[j].language) > 0)
                 position = j;
 		}
 		if(position != i)
 		{
-			strcpy(temp[0], directory->entries[entryIndex].pair[i].language); 
-            strcpy(temp[1], directory->entries[entryIndex].pair[i].translation);
-			strcpy (directory->entries[entryIndex].pair[i].language, directory->entries[entryIndex].pair[position].language);
-            strcpy (directory->entries[entryIndex].pair[i].translation, directory->entries[entryIndex].pair[position].translation);
-			strcpy (directory->entries[entryIndex].pair[position].language, temp[0]);
-            strcpy (directory->entries[entryIndex].pair[position].translation, temp[1]);
+			strcpy(temp[0], directory->entries[nEntryIndex].pair[i].language); 
+            strcpy(temp[1], directory->entries[nEntryIndex].pair[i].translation);
+			strcpy (directory->entries[nEntryIndex].pair[i].language, directory->entries[nEntryIndex].pair[position].language);
+            strcpy (directory->entries[nEntryIndex].pair[i].translation, directory->entries[nEntryIndex].pair[position].translation);
+			strcpy (directory->entries[nEntryIndex].pair[position].language, temp[0]);
+            strcpy (directory->entries[nEntryIndex].pair[position].translation, temp[1]);
 		}
 	}
 }
 
+/*  displayAll displays all of the entries in directory 
+    one by one with each individual entry sorted 
+    alphabetically
+    @param directory - the structure that contains the list
+                       of entries
+    Pre-condition: nEntryIndex is between 0 to 149, inclusive
+*/
 void
 displayAll (directorytype * directory)
 { 
@@ -383,15 +465,22 @@ displayAll (directorytype * directory)
     char cOption;
     char cTemp;
 
+    /* When no entries exist, this message is displayed */
     if (nEntryCount == 0)
         printf("There are no entries to be displayed\n");
 
     while (i < nEntryCount)
     {
+        /* Sort entry pairs alphabetically */
         sortAlphabetical(directory, i);
+
         nPairCount = directory->entries[i].nPairCount;
+
         printf("Entry #%d\n", i+1);
+
+        /* Display one entry */
         displayEntry(*directory, i, nPairCount);
+
         printf("_______________________________________________\n");
         printf("[N] Next Entry\n");
         printf("[P] Previous Entry\n");
@@ -401,12 +490,19 @@ displayAll (directorytype * directory)
         scanf("%c", &cOption);
         scanf("%c", &cTemp);
 
+        /* Next entry increments the entry index i by 1 */
         if (cOption == 'N')
             i++;
+
+        /* Previous entry decrements the entry index i by 1 */
         else if (cOption == 'P')
             i--;
+        
+        /* End display sets i to nEntryCount to exit the 
+           while loop */
         else if (cOption == 'X')
             i = nEntryCount;
+        
         else
             printf("Invalid Option");
             
@@ -414,6 +510,12 @@ displayAll (directorytype * directory)
  
 }
 
+/*  modifyEntry allows the user to modify an entry pair by
+    changing either the language or translation of a given
+    pair 
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void
 modifyEntry(directorytype * directory)
 {
@@ -422,32 +524,39 @@ modifyEntry(directorytype * directory)
     str choice, input, modify;
     int nEntryCount = directory->nEntryCount;
     int nPairCount;
+
+    /* Display all directories */
     displayAll(directory);
 
+    /* Ask user for entry number to modify */
     printf("Which entry do you want to modify? ");
     scanf("%d", &nEntry);
     scanf("%c", &temp);
+
     if (!(nEntry >= 1 && nEntry <= nEntryCount))
-    {
-        printf("Invalid Input\n");
-    }
+        printf("Invalid input. Entry does not exist.\n");
+    
     else
     {
         nPairCount = directory->entries[nEntry-1].nPairCount;
 
+        /* Loop until user inputs NO when asked if they would like
+           to make more modifications */
         do 
         {
-            
+            /* Loop until valid pair number is given */
             do
             {
                 printf("Which pair do you want to modify? ");
                 scanf("%d", &nPair);
                 scanf("%c", &temp);
                 if (!(nPair >= 1 && nPair <= nPairCount))
-                    printf("Invalid Input\n");
+                    printf("Invalid input. Pair does not exist\n");
 
             } while (!(nPair >= 1 && nPair <= nPairCount));
 
+            /* Loop until valid choice (either language or translation)
+               is given */
             do
             {
                 
@@ -467,14 +576,13 @@ modifyEntry(directorytype * directory)
                     getInput (input);
 
                     strcpy(directory->entries[nEntry-1].pair[nPair -1].translation, input);
-    
                 }
                 else
-                    printf("Invalid Input\n");
+                    printf("Invalid input.\n");
                 
             } while (!(strcmp(choice, "TRANSLATION") == 0 || strcmp (choice, "LANGUAGE") == 0));
             
-            printf ("More modifications for the entry (Yes/No)?");
+            printf ("Would you like to make more modifications for this entry (Yes/No)? ");
             getInput (modify);
             toUpper(modify);
 
@@ -483,6 +591,11 @@ modifyEntry(directorytype * directory)
     }
 }
 
+/*  deleteEntry allows the user to delete an entire entry
+    from the directory
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void
 deleteEntry (directorytype *directory)
 {
@@ -491,6 +604,7 @@ deleteEntry (directorytype *directory)
     int deleteEntry;
     char temp;
     int i, j;
+
     displayAll (directory);
     printf("Which entry do you want to delete? ");
     scanf("%d", &deleteEntry);
@@ -501,6 +615,7 @@ deleteEntry (directorytype *directory)
         for (i = deleteEntry - 1; i < nEntryCount - 1; i++)
         {
             nPairCount = directory->entries[i].nPairCount;
+            /* Set all pairs in the deleted entry to null to delete */
             for (j = 0; j < nPairCount; j++)
             {
                 strcpy(directory->entries[i].pair[j].translation,"\0");
@@ -508,6 +623,9 @@ deleteEntry (directorytype *directory)
             }
 
             nPairCount = directory->entries[i + 1].nPairCount;
+            /* Move all pairs from an entry to the location of the 
+               deleted entry then all succeeding pairs are moved
+               by one index less than its original */
             for (j = 0; j < nPairCount; j++)
             {
                 strcpy(directory->entries[i].pair[j].translation, directory->entries[i + 1].pair[j].translation);
@@ -515,6 +633,8 @@ deleteEntry (directorytype *directory)
             }
         }
 
+        /* Last entry is also set to null since all entries have
+           already been moved */
         for (j = 0; j < nPairCount; j++)
         {
             strcpy(directory->entries[nEntryCount-1].pair[j].translation,"\0");
@@ -524,9 +644,15 @@ deleteEntry (directorytype *directory)
         nEntryCount = directory->nEntryCount;
         
     }
-    else printf("Invalid Input\n");
+    else printf("Entry does not exist. Invalid input\n");
 
 }
+
+/*  deleteTranslation allows the user to delete a specific
+    language-translation pair in an entry of their choice
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void
 deleteTranslation(directorytype *directory)
 {
@@ -546,8 +672,11 @@ deleteTranslation(directorytype *directory)
         do
         {
             nPairCount = directory->entries[entry - 1].nPairCount;
+            /* If there's only one pair left in the entry, delete
+               the entire entry */
             if (nPairCount == 1)
                 deleteEntry(directory);
+            
             else
             {
                 do
@@ -555,6 +684,7 @@ deleteTranslation(directorytype *directory)
                     printf("Which language-translation pair do you want to delete? ");
                     scanf("%d", &deletePair);
                     scanf("%c", &temp);
+
                     if (!(deletePair >= 1 && deletePair <= nPairCount))
                     {
                         printf("Invalid Input\n");
@@ -568,12 +698,17 @@ deleteTranslation(directorytype *directory)
             
                 if (strcmp(choice, "YES") == 0)
                 {
+                    /* Move all pairs to the location of the deleted 
+                       pair then all succeeding pairs are moved by 
+                       one index less than its original */
                     for (i = deletePair - 1; i < nPairCount - 1; i++)
                     {
                         strcpy (directory->entries[entry-1].pair[i].language, directory->entries[entry-1].pair[i+1].language);
                         strcpy (directory->entries[entry-1].pair[i].translation, directory->entries[entry-1].pair[i+1].translation);
                     } 
-                    
+
+                    /* Last pair is also set to null since all pairs have
+                       already been moved */
                     strcpy(directory->entries[entry-1].pair[nPairCount-1].translation,"\0");
                     strcpy(directory->entries[entry-1].pair[nPairCount-1].language,"\0");
 
@@ -586,9 +721,14 @@ deleteTranslation(directorytype *directory)
             }
         } while (strcmp(choice, "YES") == 0);
     }
-    else printf ("Invalid Input\n");
+    else printf ("Invalid input.\n");
 }
 
+/*  searchWord shows a list of all the entries where a
+    given translation appears in
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void
 searchWord (directorytype *directory)
 {
@@ -614,8 +754,11 @@ searchWord (directorytype *directory)
             }
         }
     }
+
+    /* If nCount is greater than 0, word was found in one or more entries */
     if (nCount > 0)
     {
+        /* Display all entries word was found in */
         for (i = 0; i < nCount; i++)
         {
             index = tempMatch[i];
@@ -627,6 +770,11 @@ searchWord (directorytype *directory)
     else printf ("No Entry Match\n");
 }
 
+/*  searchTranslation shows a list of all the entries
+    where a specific language-translation pair appears in 
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void 
 searchTranslation(directorytype * directory)
 {
@@ -637,9 +785,10 @@ searchTranslation(directorytype * directory)
     int tempMatch[MAXENTRY];
     int index, i;
 
-    printf ("Input language: ");
+    /* Ask user to input the pair to search */
+    printf ("Enter language: ");
     getInput(language);
-    printf("Input translation: ");
+    printf("Enter translation: ");
     getInput(translation);
 
     for (entry = 0; entry < nEntryCount; entry++)
@@ -656,8 +805,10 @@ searchTranslation(directorytype * directory)
         }
     }
 
+    /* If nCount is greater than 0, word was found in one or more entries */
     if (nCount > 0)
     {
+        /* Display all entries word was found in */
         for (i = 0; i < nCount; i++)
         {
             index = tempMatch[i];
@@ -670,6 +821,12 @@ searchTranslation(directorytype * directory)
     
 }
 
+/*  exportData saves all the stored data in directory
+    into a text file, wherein the filename is given by the 
+    user
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void
 exportData (directorytype directory)
 {
@@ -680,15 +837,17 @@ exportData (directorytype directory)
     int pair;
     FILE *savedata;
 
-    
-    /* save all data into a text file */
-
     printf("Input filename: ");
     getInput (filename);
+
+    /* Open file to write to and overwrite any previously 
+       existing data in the file */
     savedata = fopen(filename, "w");
 
+    /* If file opened successfully */
     if (savedata != NULL)
     {
+        /* Write all contents of directory to file */
         for (i = 0; i < nEntryCount; i++)
         {
             nPairCount = directory.entries[i].nPairCount;
@@ -707,7 +866,13 @@ exportData (directorytype directory)
 
 }
 
-
+/*  importData reads data from a file and stores it in the
+    directory structure, differentiating between the
+    languages and translations as well as different entries
+    separeted by a newline
+    @param directory - the structure that contains the list
+                       of entries
+*/
 void
 importData (directorytype * directory)
 {
@@ -725,60 +890,86 @@ importData (directorytype * directory)
     int i;
 
 
-    /* open text file*/
+    /* Ask user to input name of file to be opened */
     printf("Input filename: ");
     getInput(filename);
     existdata = fopen(filename , "r");
 
     if (existdata != NULL)
     {
-        /* until it encounters a double enter, that's the time that it is considered another entry*/
+        /* While program has not reached the end of the file */
         while (!feof(existdata))
         {
             temp.nPairCount = 0;
             nPairCount = temp.nPairCount;
             newEntry = 0;
             strcpy(checkEntry, "");
+
+            /* Loop while it is not yet a new entry */
             do
             {
+                /* For the first pair of an entry */
                 if (nPairCount == 0)
                 {
+                    /* Read the language of the first pair */
                     fscanf (existdata, "%s", language);
+
                     langlength = strlen(language);
+
+                    /* Set semicolon to nullbyte */
                     language[langlength - 1] = '\0';
+
+                    /* Store language in temporary entry structure */
                     strcpy (temp.pair[nPairCount].language, language);
           
-                    /* store to an array */
+                    /* Read the translation of the first pair */
                     fscanf (existdata, "%c", tempspace);
+
                     fscanf (existdata, "%[^\n]s", translation);
+
+                    /* Store translation in a temporary entry structure */
                     strcpy (temp.pair[nPairCount].translation, translation);
                     
+                    /* Increment pair count of the temporary array */
                     nPairCount++;
                     temp.nPairCount = nPairCount;
              
                 }
+                /* Scan for the newline */
                 fgets (checkEntry, 2, existdata);
-                fgets (checkEntry2, 2, existdata);
                 
+                /* Scan for the first character of the next line in the file */
+                fgets (checkEntry2, 2, existdata);
       
+                /* If the next line is ONLY a newline or the end of the file */
                 if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
                 {
-                    /* indicates a new entry*/
+                    /* Indicate that the next pair/s are part of a new entry*/
                     newEntry = 1;
                 }
                 else 
                 {
+                    /* If the next line is a character, copy it to index
+                       0 of the language array */
                     strcpy (language, checkEntry2);
+
+                    /* Concatenate the lest of the line until the semicolon */
                     fscanf (existdata, "%s", tempword);
                     strcat(language, tempword);
-                    
+                
                     langlength = strlen(language);
+
+                    /* Set semicolon to nullbyte */
                     language[langlength - 1] = '\0';
+
+                    /* Store language to the temporary entry structure */
                     strcpy (temp.pair[nPairCount].language, language);
                 
-                    /* store to an array */
+                    /* Scan the rest of the line for the translation */
                     fscanf (existdata, "%c", tempspace);
                     fscanf (existdata, "%[^\n]s", translation);
+
+                    /* Store translation to the temporary entry structure */
                     strcpy (temp.pair[nPairCount].translation, translation);
 
                     nPairCount++;
@@ -787,6 +978,8 @@ importData (directorytype * directory)
                 }
             } while (newEntry == 0);
 
+            /* If previous entries already exist in the directory, 
+               ask if the read entry should be appended */
             if (nEntryCount > 0)
             {
                 for (i = 0; i < nPairCount; i++)
@@ -797,11 +990,14 @@ importData (directorytype * directory)
                 getInput (choice);
                 toUpper (choice);
             }
+            /* If previous entries do not exist in the directory,
+               the read entry will immediately be added */
             else
             {
                 strcpy(choice, "YES");
             }
 
+            /* Append entry to directory */
             if (strcmp (choice, "YES") == 0)
             {
                 directory->entries[nEntryCount].nPairCount = nPairCount;
