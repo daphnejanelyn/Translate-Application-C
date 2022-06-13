@@ -111,7 +111,7 @@ getNewPair(directorytype * directory, int entryIndex)
     printf ("Enter translation:");
     getInput(translation);
 
-    // Add pair count and Append to current entry
+    /* Add pair count and Append to current entry*/
     directory->entries[entryIndex].nPairCount += 1; 
     nPairCount = directory->entries[entryIndex].nPairCount;
 
@@ -129,14 +129,14 @@ addEntry (directorytype * directory)
     int nEntryCount, nPairCount; 
     str newEntry, newPair;
 
-    // Ask for Input
+    /* Ask for Input */
     printf ("Enter Language:");
     getInput(language);
 
     printf ("Enter translation:");
     getInput(translation);
 
-    // Check if pair exists
+    /* Check if pair exists*/
     for (entry = 0; entry < MAXENTRY; entry++)
     {
         for  (pair = 0; pair < MAXPAIR; pair++)
@@ -147,10 +147,10 @@ addEntry (directorytype * directory)
         }
     }
 
-    // if nFound == 1, show entries with the same information as the one entered first
+    /* if nFound == 1, show entries with the same information as the one entered first*/
     if (nFound == 1)
     {
-        // Display first entries with the same info
+        /* Display first entries with the same info*/
         nEntryCount = directory->nEntryCount;
         for (entry = 0; entry < nEntryCount; entry++)
         {
@@ -183,7 +183,7 @@ addEntry (directorytype * directory)
             strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].language, language);
             strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].translation, translation);
 
-            // do while user does not choose NO
+            /* do while user does not choose NO*/
             do
             {
                 printf ("Do you want to encode another pair(Yes/No)?");
@@ -210,7 +210,7 @@ addEntry (directorytype * directory)
         strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].language, language);
         strcpy (directory->entries[nEntryCount -1].pair[nPairCount - 1].translation, translation);
 
-        // do while user does not choose NO
+        /* do while user does not choose NO*/
         do
         {
             printf ("Do you want to encode another pair(Yes/No)?");
@@ -219,7 +219,7 @@ addEntry (directorytype * directory)
 
             if (strcmp (newPair, "YES") == 0)
             {
-                // Enter new pair
+                /* Enter new pair*/
                 getNewPair(directory, nEntryCount - 1);
             }
 
@@ -239,14 +239,14 @@ addTranslation(directorytype * directory)
     str newPair;
     char temp;
     
-    // Enter new pair
+    /* Enter new pair*/
     printf ("Enter Language:");
     getInput (language);
 
     printf ("Enter translation:");
     getInput (translation);
 
-    // Check if entry exists
+    /* Check if entry exists*/
     for (entry = 0; entry < MAXENTRY; entry++)
     {
         for  (pair = 0; pair < MAXPAIR; pair++)
@@ -259,13 +259,13 @@ addTranslation(directorytype * directory)
             }
         }
     }
-    // entry does not exist, when count is equal to 0
+    /* entry does not exist, when count is equal to 0 */
     if (nCount == 0)
     {
         printf ("Entry does not exist.\n");
         printf ("Please press the Add Entry Option");
     }   
-    // entry exist, count is > 0
+    /* entry exist, count is > 0*/
     else if (nCount > 0)
     {
         for (i = 0; i < nCount; i++)
@@ -276,17 +276,17 @@ addTranslation(directorytype * directory)
             printf ("\n");
         }
 
-        // if count == 1, language translation pair is asked and added to the same entry
+        /* if count == 1, language translation pair is asked and added to the same entry*/
         if (nCount == 1 && directory->entries[tempentry[0]].nPairCount < 10)
         {
-            // Enter new pair
+            /* Enter new pair*/
             printf ("Enter Language:");
             getInput (language);
 
             printf ("Enter translation:");
             getInput (translation);
 
-            // Add pair count and Append to current entry
+            /* Add pair count and Append to current entry*/
             directory->entries[tempentry[0]].nPairCount += 1; 
             nPairCount = directory->entries[tempentry[0]].nPairCount;
 
@@ -301,7 +301,7 @@ addTranslation(directorytype * directory)
 
                 if (strcmp (newPair, "YES") == 0)
                 {
-                    //Enter new pair
+                    /*Enter new pair*/
                     getNewPair(directory, tempentry[0]);
                 }
 
@@ -315,14 +315,14 @@ addTranslation(directorytype * directory)
             scanf ("%d", &newentry);
             scanf("%c", &temp);
 
-            // Enter new pair
+            /* Enter new pair*/
             printf ("Enter Language:");
             getInput (language);
 
             printf ("Enter translation:");
             getInput (translation);
 
-            // Add pair count and Append to chosen entry
+            /* Add pair count and Append to chosen entry*/
             directory->entries[tempentry[newentry -1]].nPairCount += 1; 
             nPairCount = directory->entries[tempentry[newentry -1]].nPairCount;
 
@@ -336,7 +336,7 @@ addTranslation(directorytype * directory)
 
                 if (strcmp (newPair, "YES") == 0)
                 {
-                    // Enter new pair
+                    /* Enter new pair*/
                     getNewPair(directory, tempentry[newentry -1]);
                 }
             } while (strcmp (newPair, "YES") == 0 && directory->entries[tempentry[newentry -1]].nPairCount <= 10);
@@ -681,7 +681,7 @@ exportData (directorytype directory)
     FILE *savedata;
 
     
-    // save all data into a text file 
+    /* save all data into a text file */
 
     printf("Input filename: ");
     getInput (filename);
@@ -725,14 +725,14 @@ importData (directorytype * directory)
     int i;
 
 
-    // open text file
+    /* open text file*/
     printf("Input filename: ");
     getInput(filename);
     existdata = fopen(filename , "r");
 
     if (existdata != NULL)
     {
-        // until it encounters a double enter, that's the time that it is considered another entry
+        /* until it encounters a double enter, that's the time that it is considered another entry*/
         while (!feof(existdata))
         {
             temp.nPairCount = 0;
@@ -748,11 +748,11 @@ importData (directorytype * directory)
                     language[langlength - 1] = '\0';
                     strcpy (temp.pair[nPairCount].language, language);
           
-                    // store to an array
+                    /* store to an array */
                     fscanf (existdata, "%c", tempspace);
                     fscanf (existdata, "%[^\n]s", translation);
                     strcpy (temp.pair[nPairCount].translation, translation);
-                    //fgets(translation, MAXCHAR, existdata);
+                    
                     nPairCount++;
                     temp.nPairCount = nPairCount;
              
@@ -763,7 +763,7 @@ importData (directorytype * directory)
       
                 if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
                 {
-                    // indicates a new entry
+                    /* indicates a new entry*/
                     newEntry = 1;
                 }
                 else 
@@ -776,7 +776,7 @@ importData (directorytype * directory)
                     language[langlength - 1] = '\0';
                     strcpy (temp.pair[nPairCount].language, language);
                 
-                    // store to an array
+                    /* store to an array */
                     fscanf (existdata, "%c", tempspace);
                     fscanf (existdata, "%[^\n]s", translation);
                     strcpy (temp.pair[nPairCount].translation, translation);
@@ -818,11 +818,6 @@ importData (directorytype * directory)
         
     }
     else printf("File cannot be opened\n");
-
-    // read data stored in text file 
-    // user inputs filename to load 
-    // retrieves entry by entry 
-    // checks if entry is already present in the list of entries
 
     fclose(existdata);
 }
