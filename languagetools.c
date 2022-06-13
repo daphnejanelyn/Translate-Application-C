@@ -44,14 +44,14 @@ importDataTools(directorytype *directory)
     int i;
 
 
-    // open text file
+    /* open text file*/
     printf("Input filename: ");
     getInput(filename);
     existdata = fopen(filename , "r");
 
     if (existdata != NULL)
     {
-        // until it encounters a double enter, that's the time that it is considered another entry
+        /* until it encounters a double enter, that's the time that it is considered another entry*/
         while (!feof(existdata))
         {
             temp.nPairCount = 0;
@@ -67,11 +67,11 @@ importDataTools(directorytype *directory)
                     language[langlength - 1] = '\0';
                     strcpy (temp.pair[nPairCount].language, language);
           
-                    // store to an array
+                    /* store to an array*/
                     fscanf (existdata, "%c", tempspace);
                     fscanf (existdata, "%[^\n]s", translation);
                     strcpy (temp.pair[nPairCount].translation, translation);
-                    //fgets(translation, MAXCHAR, existdata);
+            
                     nPairCount++;
                     temp.nPairCount = nPairCount;
              
@@ -82,7 +82,7 @@ importDataTools(directorytype *directory)
       
                 if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
                 {
-                    // indicates a new entry
+                    /* indicates a new entry*/
                     newEntry = 1;
                 }
                 else 
@@ -95,7 +95,7 @@ importDataTools(directorytype *directory)
                     language[langlength - 1] = '\0';
                     strcpy (temp.pair[nPairCount].language, language);
                 
-                    // store to an array
+                    /* store to an array */
                     fscanf (existdata, "%c", tempspace);
                     fscanf (existdata, "%[^\n]s", translation);
                     strcpy (temp.pair[nPairCount].translation, translation);
@@ -128,7 +128,7 @@ split(char *sentence, int *pCount, longStr words[MAXWORDS])
 {
     int i, j = 0, length;
     *pCount = 0;
-    //included the index where the '\0' is to include the last word
+    /*included the index where the '\0' is to include the last word*/
     length =  strlen(sentence);
     for (i = 0; i <= length; i++)
     {
