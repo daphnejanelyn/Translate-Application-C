@@ -21,8 +21,8 @@ main ()
         directory.entries[entry].nPairCount = 0;
         for (pair = 0; pair < MAXPAIR; pair++)
         {
-            strcpy(directory.entries[entry].pair[pair].translation,"\0");
-            strcpy(directory.entries[entry].pair[pair].language,"\0");
+            strcpy(directory.entries[entry].pair[pair].translation, "\0");
+            strcpy(directory.entries[entry].pair[pair].language, "\0");
         }
     }
 
