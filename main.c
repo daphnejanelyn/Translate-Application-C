@@ -63,6 +63,7 @@ main ()
                             break;
                     case 10: importData(&directory);
                              break;
+                    case 0:  break;
                     default: printf ("Please enter a valid input: ");
                              scanf ("%d", &nOption);
                              break;
@@ -98,6 +99,7 @@ main ()
                             break;
                     case 2: simpleTranslation (&directory);   
                             break; 
+                    case 0: break;
                     default: printf ("Please enter a valid input: ");
                              scanf ("%d", &nOption);
                              break;
