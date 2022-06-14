@@ -885,13 +885,12 @@ exportData (directorytype directory)
             if (i != nEntryCount - 1)
                 fprintf(savedata, "\n");
         }
+	fclose(savedata);
     }
     else
     {
         printf("File cannot be opened.\n");
     }
-     
-    fclose(savedata);
 
 }
 
@@ -1040,9 +1039,7 @@ importData (directorytype * directory)
             }
 
         } 
-        
+        fclose(savedata);
     }
     else printf("File cannot be opened\n");
-
-    fclose(existdata);
 }
