@@ -33,6 +33,8 @@ main ()
     {
         /* Display and get menu input */
         getMenu(&nMenu);
+        if (!(nMenu == 1 || nMenu == 2 || nMenu == 3))
+            printf("Invalid menu option. Please select again.\n");
 
         if (nMenu == 1)
         {
@@ -64,9 +66,6 @@ main ()
                     case 10: importData(&directory);
                              break;
                     case 0:  break;
-                    default: printf ("Please enter a valid input: ");
-                             scanf ("%d", &nOption);
-                             break;
                 }
 
             }
@@ -106,6 +105,19 @@ main ()
                 }
                     
             } while (nOption != 0);
+
+            /* clear all entries*/
+            directory.nEntryCount = 0;
+
+            for (entry = 0; entry < MAXENTRY; entry++)
+            {
+                directory.entries[entry].nPairCount = 0;
+                for (pair = 0; pair < MAXPAIR; pair++)
+                {
+                    strcpy(directory.entries[entry].pair[pair].translation,"\0");
+                    strcpy(directory.entries[entry].pair[pair].language,"\0");
+                }
+            }
         }
 
 
