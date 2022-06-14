@@ -141,7 +141,7 @@ getNewPair(directorytype * directory,
     printf ("Enter Language: ");
     getInput(language);
 
-    printf ("Enter translation: ");
+    printf ("Enter Translation: ");
     getInput(translation);
 
     /* Incremend pair count */
@@ -208,7 +208,7 @@ addEntry (directorytype * directory)
         }
 
         /* Ask user if they still want to add the pair as a new entry */
-        printf ("Is this a new entry (Yes/No)?");
+        printf ("Is this a new entry (Yes/No)? ");
         getInput(newEntry);
 
         toUpper(newEntry);
@@ -233,7 +233,7 @@ addEntry (directorytype * directory)
             do
             {
                 /* Ask the user if they want to encode another pair in the entry */
-                printf ("Do you want to encode another pair (Yes/No)?");
+                printf ("Do you want to encode another pair (Yes/No)? ");
                 getInput(newPair);
                 toUpper(newPair);
 
@@ -264,7 +264,7 @@ addEntry (directorytype * directory)
         do
         {
             /* Ask the user if they want to encode another pair in the entry */
-            printf ("Do you want to add another pair to this entry (Yes/No)?");
+            printf ("Do you want to add another pair to this entry (Yes/No)? ");
             getInput(newPair);
             toUpper(newPair);
 
@@ -302,7 +302,7 @@ addTranslation(directorytype * directory)
     printf ("Enter Language:");
     getInput (language);
 
-    printf ("Enter translation:");
+    printf ("Enter Translation:");
     getInput (translation);
 
     /* Check if entry with that pair exists*/
@@ -340,10 +340,10 @@ addTranslation(directorytype * directory)
         if (nCount == 1 && directory->entries[tempentry[0]].nPairCount < 10)
         {
             /* Enter new pair*/
-            printf ("Enter Language:");
+            printf ("Enter New Language: ");
             getInput (language);
 
-            printf ("Enter translation:");
+            printf ("Enter New Translation: ");
             getInput (translation);
 
             /* Increment pair count */
@@ -358,7 +358,7 @@ addTranslation(directorytype * directory)
                add another pair to the entry */
             do
             {
-                printf ("Do you want to encode another pair(Yes/No)?");
+                printf ("Do you want to encode another pair (Yes/No)? ");
                 getInput(newPair);
                 toUpper(newPair);
 
@@ -374,7 +374,7 @@ addTranslation(directorytype * directory)
         /* If the pair appears in multiple entries, user will choose an entry */
         else if (nCount > 1 && directory->entries[tempentry[0]].nPairCount < 10)
         {
-            printf ("Choose Entry to add a language-translation pair:");
+            printf ("Choose Entry to add a language-translation pair to: ");
             scanf ("%d", &newentry);
             scanf("%c", &temp);
 
@@ -467,7 +467,7 @@ displayAll (directorytype * directory)
 
     /* When no entries exist, this message is displayed */
     if (nEntryCount == 0)
-        printf("There are no entries to be displayed\n");
+        printf("There are no entries to be displayed.\n");
 
     while (i < nEntryCount)
     {
@@ -490,6 +490,8 @@ displayAll (directorytype * directory)
         scanf("%c", &cOption);
         scanf("%c", &cTemp);
 
+        toUpper(&cOption);
+
         /* Next entry increments the entry index i by 1 */
         if (cOption == 'N')
             i++;
@@ -504,7 +506,7 @@ displayAll (directorytype * directory)
             i = nEntryCount;
         
         else
-            printf("Invalid Option");
+            printf("Invalid option.\n");
             
     }
  
@@ -566,13 +568,13 @@ modifyEntry(directorytype * directory)
 
                 if (strcmp (choice, "LANGUAGE") == 0)
                 {
-                    printf ("Input language:");
+                    printf ("Input language: ");
                     getInput (input);
                     strcpy (directory->entries[nEntry -1].pair[nPair -1].language, input);
                 }
                 else if (strcmp(choice, "TRANSLATION") == 0)
                 {
-                    printf ("Input translation:");
+                    printf ("Input translation: ");
                     getInput (input);
 
                     strcpy(directory->entries[nEntry-1].pair[nPair -1].translation, input);
@@ -644,7 +646,7 @@ deleteEntry (directorytype *directory)
         nEntryCount = directory->nEntryCount;
         
     }
-    else printf("Entry does not exist. Invalid input\n");
+    else printf("Invalid input. Entry does not exist.\n");
 
 }
 
@@ -687,7 +689,7 @@ deleteTranslation(directorytype *directory)
 
                     if (!(deletePair >= 1 && deletePair <= nPairCount))
                     {
-                        printf("Invalid Input\n");
+                        printf("Invalid Input.\n");
                         printf("Do you still want to delete a pair (Yes/No)? ");
                         getInput (choice);
                         toUpper (choice);
@@ -721,7 +723,7 @@ deleteTranslation(directorytype *directory)
             }
         } while (strcmp(choice, "YES") == 0);
     }
-    else printf ("Invalid input.\n");
+    else printf ("Invalid Input.\n");
 }
 
 /*  searchWord shows a list of all the entries where a
@@ -738,6 +740,7 @@ searchWord (directorytype *directory)
     int nPairCount, nCount = 0;
     int tempMatch[MAXENTRY];
     int index, i;
+    char cOption, cTemp;
 
     printf ("Input word: ");
     getInput(word);
@@ -764,10 +767,36 @@ searchWord (directorytype *directory)
             index = tempMatch[i];
             printf ("Entry # %d\n", i+1);
             displayEntry(*directory, index, directory->entries[index].nPairCount);
+            printf("_______________________________________________\n");
+            printf("[N] Next Entry\n");
+            printf("[P] Previous Entry\n");
+            printf("[X] End Display\n");
+            printf("_______________________________________________\n");
+            printf("Enter option: ");
+            scanf("%c", &cOption);
+            scanf("%c", &cTemp);
+
+            toUpper(&cOption);
+
+            /* Next entry increments the entry index i by 1 */
+            if (cOption == 'N')
+                i++;
+
+            /* Previous entry decrements the entry index i by 1 */
+            else if (cOption == 'P')
+                i--;
+            
+            /* End display sets i to nEntryCount to exit the 
+            while loop */
+            else if (cOption == 'X')
+                i = nEntryCount;
+            
+            else
+                printf("Invalid option.\n");
             printf ("\n");
         }   
     }
-    else printf ("No Entry Match\n");
+    else printf ("No entry match.\n");
 }
 
 /*  searchTranslation shows a list of all the entries
@@ -859,7 +888,7 @@ exportData (directorytype directory)
     }
     else
     {
-        printf("File cannot be opened\n");
+        printf("File cannot be opened.\n");
     }
      
     fclose(savedata);
