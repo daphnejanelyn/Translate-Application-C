@@ -223,6 +223,11 @@ split(char *sentence,
     @param languagecomp is the string 
     (language) that is being matched.  
 
+    return i: index of where the language is found
+          -1: if language is not found
+
+
+
     Pre-condition: languagecomp can 
     have at most 20 characters. 
 */
@@ -237,7 +242,7 @@ checkLanguages(languagetype * language,
         if (strcmp(language->languages[i], languagecomp) == 0)
             return i;
     }
-    return 0;
+    return -1;
 }
 
 /*
@@ -273,7 +278,7 @@ findWord(languagetype * language,
     int nEntry, nPair;
     int nEntryCount = directory->nEntryCount;
     int nPairCount;
-    int nIndex, nWord, i;
+    int nIndex, nWord;
     int nLangCount = 0;
 
     /* Loops through each language-translation pair
@@ -295,10 +300,10 @@ findWord(languagetype * language,
                     languages in struct language if and only
                     if the language is not yet declared in the list. */
 
-                    if (checkLanguages(language, directory->entries[nEntry].pair[nPair].language) == 0)
+                    if (checkLanguages(language, directory->entries[nEntry].pair[nPair].language) == -1)
                     {
-                        i = nLangCount;
-                        strcpy (language->languages[i], directory->entries[nEntry].pair[nPair].language);
+                        strcpy (language->languages[nLangCount], directory->entries[nEntry].pair[nPair].language);
+                        language->languageCount[nLangCount] = 1;
                         nLangCount++;
                     }
                     else
@@ -335,7 +340,7 @@ identifyLanguage (directorytype *directory,
     int nCount = 0;
     int nLangCount = 0;
     int nWord, nTemp = 0;
-    int nHighestIndex;
+    int nHighestIndex, nSecondHighIndex;
 
     /* Ask user to input source text */
     printf("Enter a phrase or sentence: ");
@@ -355,12 +360,27 @@ identifyLanguage (directorytype *directory,
             nHighestIndex = nWord;
         }
     }
+    nTemp = 0;
+
+    /* Identify the second highest language count */
+    for (nWord = 0; nWord < MAXWORDS; nWord++)
+    {
+        if (nTemp < language->languageCount[nWord] && nWord != nHighestIndex)
+        {
+            nTemp = language->languageCount[nWord];
+            nSecondHighIndex = nWord;
+            
+        }
+    }
 
     /* Displaying main language of source text */
     if (nLangCount == 0)
         printf("Cannot determine the language\n");
-    else 
+    else
+    {
         printf ("Main language: %s\n", language->languages[nHighestIndex]);
+        printf ("Language with the second Highest Count: %s\n", language->languages[nSecondHighIndex]);
+    }
     
 }
 
