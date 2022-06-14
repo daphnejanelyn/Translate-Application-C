@@ -376,10 +376,14 @@ identifyLanguage (directorytype *directory,
     /* Displaying main language of source text */
     if (nLangCount == 0)
         printf("Cannot determine the language\n");
-    else
+    else if (nLangCount > 1)
     {
         printf ("Main language: %s\n", language->languages[nHighestIndex]);
         printf ("Language with the second Highest Count: %s\n", language->languages[nSecondHighIndex]);
+    }
+    else if (nLangCount == 1)
+    {
+        printf ("Main language: %s\n", language->languages[nHighestIndex]);
     }
     
 }
