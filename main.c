@@ -63,6 +63,9 @@ main ()
                             break;
                     case 10: importData(&directory);
                              break;
+                    default: printf ("Please enter a valid input: ");
+                             scanf ("%d", &nOption);
+                             break;
                 }
 
             }
@@ -95,6 +98,9 @@ main ()
                             break;
                     case 2: simpleTranslation (&directory);   
                             break; 
+                    default: printf ("Please enter a valid input: ");
+                             scanf ("%d", &nOption);
+                             break;
                 }
                     
             } while (nOption != 0);
@@ -106,4 +112,3 @@ main ()
 
     return 0;
 }
-
