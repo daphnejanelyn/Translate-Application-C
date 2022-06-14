@@ -84,6 +84,7 @@ main ()
 
         if (nMenu == 2)
         {
+            /* display language tools */
             importDataTools (&directory);
             do
             {
