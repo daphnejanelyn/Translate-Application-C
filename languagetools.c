@@ -151,10 +151,10 @@ importDataTools(directorytype *directory)
             nEntryCount = directory->nEntryCount;
             
       } 
+      fclose(existdata);  
     }
     else printf("File cannot be opened\n");
 
-    fclose(existdata);  
 }
 
 /*
