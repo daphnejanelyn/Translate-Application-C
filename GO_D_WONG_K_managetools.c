@@ -428,17 +428,26 @@ sortAlphabetical(directorytype * directory, int nEntryIndex)
     str temp[2];
 
     nPairCount = directory->entries[nEntryIndex].nPairCount;
-
+    /* Arrange all pairs in ascending order*/
     for(i = 0; i < nPairCount - 1; i++)
 	{
+        /* set your position cursor at index i */
 		position = i;
+        /* compare each language (ASCII Value) 
+        of that in index i*/
 		for(j = i + 1; j < nPairCount; j++)
 		{
 			if(strcmp (directory->entries[nEntryIndex].pair[position].language, directory->entries[nEntryIndex].pair[j].language) > 0)
+            {
+                /* if ASCII VALUE in index j is less than that in index i, 
+                place position cursor at index j*/
                 position = j;
+            }
 		}
+        /*If the language in index i is not equal to position, swap pairs */
 		if(position != i)
 		{
+            /* switch the language-pair located in index i to index position and vice versa */
 			strcpy(temp[0], directory->entries[nEntryIndex].pair[i].language); 
             strcpy(temp[1], directory->entries[nEntryIndex].pair[i].translation);
 			strcpy (directory->entries[nEntryIndex].pair[i].language, directory->entries[nEntryIndex].pair[position].language);
