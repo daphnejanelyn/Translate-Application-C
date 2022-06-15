@@ -36,8 +36,12 @@ getMenu(int *nMenu)
     char cTemp;
     printf("\n\t\tMAIN MENU\n");
     printf("_______________________________________________\n");
-    printf("\'Manage Data\' allows you to  \n");
-    printf("\'Language Tools\' allows you to \n");
+    printf("\'Manage Data\' allows you to create entries \n");
+    printf("and create and edit language-translation pairs \n");
+    printf("within these entries. \n");
+    printf("\'Language Tools\' allows you to import a file\n");
+    printf("of language-translation pairs to be used to either\n");
+    printf("translate a text or identify its main language\n\n");
     printf("To select an option, enter the key enclosed in\n");
     printf("brackets to the left side of the choice\n");
     printf("\n[1] Manage Data\n");
