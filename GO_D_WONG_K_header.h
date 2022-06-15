@@ -1,7 +1,7 @@
 
-#ifndef translate
+#ifndef GO_D_WONG_K_header
 
-#define translate (1)
+#define GO_D_WONG_K_header (1)
 
     #define MAXPAIR 10
     #define MAXCHAR 20
