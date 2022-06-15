@@ -75,83 +75,86 @@ importDataTools(directorytype *directory)
     while End of File is not yet read */
       while (!feof(existdata))
       {
-        temp.nPairCount = 0;
-        nPairCount = temp.nPairCount;
-        nNewEntry = 0;
-        strcpy(checkEntry, "");
-
-        /* Append entry to current entry index
-           until double enter is detected 
-           for a new entry */
-        do
+        if (!feof(existdata))
         {
-          /* Execute only for the first cycle 
-          of appending a pair */
+            temp.nPairCount = 0;
+            nPairCount = temp.nPairCount;
+            nNewEntry = 0;
+            strcpy(checkEntry, "");
 
-          if (nPairCount == 0)
-          {
-            fscanf (existdata, "%s", language);
-            nLanglength = strlen(language);
-            language[nLanglength - 1] = '\0';
-            strcpy (temp.pair[nPairCount].language, language);
-          
-            /* store to an array*/
-            fscanf (existdata, "%c", tempspace);
-            fscanf (existdata, "%[^\n]s", translation);
-            strcpy (temp.pair[nPairCount].translation, translation);
+            /* Append entry to current entry index
+            until double enter is detected 
+            for a new entry */
+            do
+            {
+            /* Execute only for the first cycle 
+            of appending a pair */
+
+            if (nPairCount == 0)
+            {
+                fscanf (existdata, "%s", language);
+                nLanglength = strlen(language);
+                language[nLanglength - 1] = '\0';
+                strcpy (temp.pair[nPairCount].language, language);
             
-            nPairCount++;
-            temp.nPairCount = nPairCount;
-             
-          }
-          /* Reads newline character 
-             from the txt file */
-          fgets (checkEntry, 2, existdata);
-          fgets (checkEntry2, 2, existdata);
+                /* store to an array*/
+                fscanf (existdata, "%c", tempspace);
+                fscanf (existdata, "%[^\n]s", translation);
+                strcpy (temp.pair[nPairCount].translation, translation);
                 
-         /* A double enter or an EOF character 
-         signals a new entry */
-          if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
-          {
-            /* indicates a new entry*/
-            nNewEntry = 1;
-          }
-
-          /* Append to the same entry */
-          else 
-          {
-                    strcpy (language, checkEntry2);
-                    fscanf (existdata, "%s", tempword);
-                    strcat(language, tempword);
+                nPairCount++;
+                temp.nPairCount = nPairCount;
+                
+            }
+            /* Reads newline character 
+                from the txt file */
+            fgets (checkEntry, 2, existdata);
+            fgets (checkEntry2, 2, existdata);
                     
-                    nLanglength = strlen(language);
-                    language[nLanglength - 1] = '\0';
-                    strcpy (temp.pair[nPairCount].language, language);
+            /* A double enter or an EOF character 
+            signals a new entry */
+            if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
+            {
+                /* indicates a new entry*/
+                nNewEntry = 1;
+            }
+
+            /* Append to the same entry */
+            else 
+            {
+                        strcpy (language, checkEntry2);
+                        fscanf (existdata, "%s", tempword);
+                        strcat(language, tempword);
+                        
+                        nLanglength = strlen(language);
+                        language[nLanglength - 1] = '\0';
+                        strcpy (temp.pair[nPairCount].language, language);
+                    
+                        /* store to an array */
+                        fscanf (existdata, "%c", tempspace);
+                        fscanf (existdata, "%[^\n]s", translation);
+                        strcpy (temp.pair[nPairCount].translation, translation);
+
+                        nPairCount++;
+                        temp.nPairCount = nPairCount;
+            }
+            } while (nNewEntry == 0);
+
+            directory->entries[nEntryCount].nPairCount = nPairCount;
+
+            /* Displaying directory per entry 
+            and language-translation pair */
+            for (i = 0; i < nPairCount; i++)
+            {
+                    strcpy(directory->entries[nEntryCount].pair[i].language, temp.pair[i].language);
+                    strcpy(directory->entries[nEntryCount].pair[i].translation, temp.pair[i].translation);
+            }
+                (directory->nEntryCount)++;
+                nEntryCount = directory->nEntryCount;
                 
-                    /* store to an array */
-                    fscanf (existdata, "%c", tempspace);
-                    fscanf (existdata, "%[^\n]s", translation);
-                    strcpy (temp.pair[nPairCount].translation, translation);
-
-                    nPairCount++;
-                    temp.nPairCount = nPairCount;
-          }
-        } while (nNewEntry == 0);
-
-        directory->entries[nEntryCount].nPairCount = nPairCount;
-
-        /* Displaying directory per entry 
-           and language-translation pair */
-        for (i = 0; i < nPairCount; i++)
-        {
-                strcpy(directory->entries[nEntryCount].pair[i].language, temp.pair[i].language);
-                strcpy(directory->entries[nEntryCount].pair[i].translation, temp.pair[i].translation);
-        }
-            (directory->nEntryCount)++;
-            nEntryCount = directory->nEntryCount;
-            
-      } 
-      fclose(existdata);  
+        } 
+        fclose(existdata);  
+      }
     }
     else printf("File cannot be opened\n");
 
