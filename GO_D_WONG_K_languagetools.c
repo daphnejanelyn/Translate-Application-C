@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "translate.h"
+#include "GO_D_WONG_K_header.h"
 
 /* LANGUAGE TRANSLATE FUNCTIONS */
 
