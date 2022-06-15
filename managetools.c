@@ -661,7 +661,7 @@ deleteTranslation(directorytype *directory)
     int deletePair, nPairCount, entry;
     int nEntryCount = directory->nEntryCount; 
     char temp;
-    int i;
+    int i, j;
     str choice; 
     strcpy(choice, "YES");
     displayAll(directory);
@@ -677,8 +677,39 @@ deleteTranslation(directorytype *directory)
             /* If there's only one pair left in the entry, delete
                the entire entry */
             if (nPairCount == 1)
-                deleteEntry(directory);
-            
+            {
+                for (i = entry - 1; i < nEntryCount - 1; i++)
+                {
+                    nPairCount = directory->entries[i].nPairCount;
+                    /* Set all pairs in the deleted entry to null to delete */
+                    for (j = 0; j < nPairCount; j++)
+                    {
+                        strcpy(directory->entries[i].pair[j].translation,"\0");
+                        strcpy(directory->entries[i].pair[j].language,"\0");
+                    }
+
+                    nPairCount = directory->entries[i + 1].nPairCount;
+                    /* Move all pairs from an entry to the location of the 
+                    deleted entry then all succeeding pairs are moved
+                    by one index less than its original */
+                    for (j = 0; j < nPairCount; j++)
+                    {
+                        strcpy(directory->entries[i].pair[j].translation, directory->entries[i + 1].pair[j].translation);
+                        strcpy(directory->entries[i].pair[j].language, directory->entries[i + 1].pair[j].language);
+                    }
+                }
+
+                /* Last entry is also set to null since all entries have
+                already been moved */
+                for (j = 0; j < nPairCount; j++)
+                {
+                    strcpy(directory->entries[nEntryCount-1].pair[j].translation,"\0");
+                    strcpy(directory->entries[nEntryCount-1].pair[j].language,"\0");
+                }
+                directory->nEntryCount -= 1;
+                nEntryCount = directory->nEntryCount;
+                strcpy (choice, "NO");
+            }
             else
             {
                 do
@@ -885,7 +916,7 @@ exportData (directorytype directory)
             if (i != nEntryCount - 1)
                 fprintf(savedata, "\n");
         }
-	fclose(savedata);
+	    fclose(savedata);
     }
     else
     {
@@ -928,118 +959,122 @@ importData (directorytype * directory)
         /* While program has not reached the end of the file */
         while (!feof(existdata))
         {
-            temp.nPairCount = 0;
-            nPairCount = temp.nPairCount;
-            newEntry = 0;
-            strcpy(checkEntry, "");
-
-            /* Loop while it is not yet a new entry */
-            do
+            if (!feof(existdata))
             {
-                /* For the first pair of an entry */
-                if (nPairCount == 0)
+
+                temp.nPairCount = 0;
+                nPairCount = temp.nPairCount;
+                newEntry = 0;
+                strcpy(checkEntry, "");
+
+                /* Loop while it is not yet a new entry */
+                do
                 {
-                    /* Read the language of the first pair */
-                    fscanf (existdata, "%s", language);
+                    /* For the first pair of an entry */
+                    if (nPairCount == 0)
+                    {
+                        /* Read the language of the first pair */
+                        fscanf (existdata, "%s", language);
 
-                    langlength = strlen(language);
+                        langlength = strlen(language);
 
-                    /* Set semicolon to nullbyte */
-                    language[langlength - 1] = '\0';
+                        /* Set semicolon to nullbyte */
+                        language[langlength - 1] = '\0';
 
-                    /* Store language in temporary entry structure */
-                    strcpy (temp.pair[nPairCount].language, language);
-          
-                    /* Read the translation of the first pair */
-                    fscanf (existdata, "%c", tempspace);
+                        /* Store language in temporary entry structure */
+                        strcpy (temp.pair[nPairCount].language, language);
+            
+                        /* Read the translation of the first pair */
+                        fscanf (existdata, "%c", tempspace);
 
-                    fscanf (existdata, "%[^\n]s", translation);
+                        fscanf (existdata, "%[^\n]s", translation);
 
-                    /* Store translation in a temporary entry structure */
-                    strcpy (temp.pair[nPairCount].translation, translation);
+                        /* Store translation in a temporary entry structure */
+                        strcpy (temp.pair[nPairCount].translation, translation);
+                        
+                        /* Increment pair count of the temporary array */
+                        nPairCount++;
+                        temp.nPairCount = nPairCount;
+                
+                    }
+                    /* Scan for the newline */
+                    fgets (checkEntry, 2, existdata);
                     
-                    /* Increment pair count of the temporary array */
-                    nPairCount++;
-                    temp.nPairCount = nPairCount;
-             
-                }
-                /* Scan for the newline */
-                fgets (checkEntry, 2, existdata);
-                
-                /* Scan for the first character of the next line in the file */
-                fgets (checkEntry2, 2, existdata);
-      
-                /* If the next line is ONLY a newline or the end of the file */
-                if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
+                    /* Scan for the first character of the next line in the file */
+                    fgets (checkEntry2, 2, existdata);
+        
+                    /* If the next line is ONLY a newline or the end of the file */
+                    if (strcmp(checkEntry2, "\n") == 0 || feof(existdata))
+                    {
+                        /* Indicate that the next pair/s are part of a new entry*/
+                        newEntry = 1;
+                    }
+                    else 
+                    {
+                        /* If the next line is a character, copy it to index
+                        0 of the language array */
+                        strcpy (language, checkEntry2);
+
+                        /* Concatenate the lest of the line until the semicolon */
+                        fscanf (existdata, "%s", tempword);
+                        strcat(language, tempword);
+                    
+                        langlength = strlen(language);
+
+                        /* Set semicolon to nullbyte */
+                        language[langlength - 1] = '\0';
+
+                        /* Store language to the temporary entry structure */
+                        strcpy (temp.pair[nPairCount].language, language);
+                    
+                        /* Scan the rest of the line for the translation */
+                        fscanf (existdata, "%c", tempspace);
+                        fscanf (existdata, "%[^\n]s", translation);
+
+                        /* Store translation to the temporary entry structure */
+                        strcpy (temp.pair[nPairCount].translation, translation);
+
+                        nPairCount++;
+                        temp.nPairCount = nPairCount;
+
+                    }
+                } while (newEntry == 0);
+
+                /* If previous entries already exist in the directory, 
+                ask if the read entry should be appended */
+                if (nEntryCount > 0)
                 {
-                    /* Indicate that the next pair/s are part of a new entry*/
-                    newEntry = 1;
+                    for (i = 0; i < nPairCount; i++)
+                    {
+                        printf("%s: %s\n", temp.pair[i].language, temp.pair[i].translation);
+                    }
+                    printf ("Do you want to append this to your current list of entries? ");
+                    getInput (choice);
+                    toUpper (choice);
                 }
-                else 
+                /* If previous entries do not exist in the directory,
+                the read entry will immediately be added */
+                else
                 {
-                    /* If the next line is a character, copy it to index
-                       0 of the language array */
-                    strcpy (language, checkEntry2);
-
-                    /* Concatenate the lest of the line until the semicolon */
-                    fscanf (existdata, "%s", tempword);
-                    strcat(language, tempword);
-                
-                    langlength = strlen(language);
-
-                    /* Set semicolon to nullbyte */
-                    language[langlength - 1] = '\0';
-
-                    /* Store language to the temporary entry structure */
-                    strcpy (temp.pair[nPairCount].language, language);
-                
-                    /* Scan the rest of the line for the translation */
-                    fscanf (existdata, "%c", tempspace);
-                    fscanf (existdata, "%[^\n]s", translation);
-
-                    /* Store translation to the temporary entry structure */
-                    strcpy (temp.pair[nPairCount].translation, translation);
-
-                    nPairCount++;
-                    temp.nPairCount = nPairCount;
-
+                    strcpy(choice, "YES");
                 }
-            } while (newEntry == 0);
 
-            /* If previous entries already exist in the directory, 
-               ask if the read entry should be appended */
-            if (nEntryCount > 0)
-            {
-                for (i = 0; i < nPairCount; i++)
+                /* Append entry to directory */
+                if (strcmp (choice, "YES") == 0)
                 {
-                    printf("%s: %s\n", temp.pair[i].language, temp.pair[i].translation);
+                    directory->entries[nEntryCount].nPairCount = nPairCount;
+                    for (i = 0; i < nPairCount; i++)
+                    {
+                        strcpy(directory->entries[nEntryCount].pair[i].language, temp.pair[i].language);
+                        strcpy(directory->entries[nEntryCount].pair[i].translation, temp.pair[i].translation);
+                    }
+                    (directory->nEntryCount)++;
+                    nEntryCount = directory->nEntryCount;
                 }
-                printf ("Do you want to append this to your current list of entries? ");
-                getInput (choice);
-                toUpper (choice);
-            }
-            /* If previous entries do not exist in the directory,
-               the read entry will immediately be added */
-            else
-            {
-                strcpy(choice, "YES");
-            }
-
-            /* Append entry to directory */
-            if (strcmp (choice, "YES") == 0)
-            {
-                directory->entries[nEntryCount].nPairCount = nPairCount;
-                for (i = 0; i < nPairCount; i++)
-                {
-                    strcpy(directory->entries[nEntryCount].pair[i].language, temp.pair[i].language);
-                    strcpy(directory->entries[nEntryCount].pair[i].translation, temp.pair[i].translation);
-                }
-                (directory->nEntryCount)++;
-                nEntryCount = directory->nEntryCount;
             }
 
         } 
-        fclose(savedata);
+        fclose(existdata);
     }
     else printf("File cannot be opened\n");
 }
