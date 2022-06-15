@@ -1,9 +1,19 @@
+/*********************************************************************************************************
+This is to certify that this project is my own work, based on my personal efforts in studying and
+applying the concepts learned. I have constructed the functions and their respective algorithms 
+and corresponding code by myself. The program was run, tested, and debugged by my own efforts. 
+I further certify that I have not copied in part or whole or otherwise plagiarized the work 
+of other students and/or persons.
+Daphne Janelyn L. Go, DLSU ID# 12131210
+Krizchelle Danielle A. Wong, DLSU ID# 12118524 
+*********************************************************************************************************/
+
 #include <stdio.h>
 #include <string.h>
 
-#include "translate.h"
-#include "managetools.c"
-#include "languagetools.c"
+#include "GO_D_WONG_K_header.h"
+#include "GO_D_WONG_K_managetools.c"
+#include "GO_D_WONG_K_languagetools.c"
 
 int 
 main ()
